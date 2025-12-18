@@ -1,88 +1,173 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
+	"path/filepath"
+	"strings"
+	"time"
 
-	"github.com/chromedp/cdproto/network"
-	"github.com/chromedp/chromedp"
+	"galileoff-WebScraper/pkg"
+	"galileoff-WebScraper/pkg/cli"
+
+	bspinner "github.com/briandowns/spinner"
 )
 
 func main() {
-	// 1. URL'i komut satırı argümanından alıyoruz
-	if len(os.Args) < 2 {
-		log.Fatal("Lütfen komut satırı argümanı olarak bir URL girin.")
+	start := time.Now()
+	spin := bspinner.New(bspinner.CharSets[9], 100*time.Millisecond)
+
+	// ---- CLI / ASCII ----
+	opts := cli.Parse()
+	cli.PrintASCII(os.Stdout, opts)
+
+	pkg.PrintInfo("galileoff. Web Scraper")
+	pkg.PrintInfo("Hazır.")
+
+	// ---- ARGÜMAN KONTROL ----
+	if len(cli.Args()) > 0 {
+		pkg.PrintError("URL komut satırından verilmez.")
+		pkg.PrintInfo("Kullanım: go run main.go")
+		pkg.PrintInfo("URL sizden istendiğinde yazın.")
+		return
 	}
-	url := os.Args[1]
 
-	// 2. chromedp için bir bağlam oluşturuyoruz
-	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(),
-		append(
-			chromedp.DefaultExecAllocatorOptions[:],
-			// Chrome kullanmayan cihazlar için Edge'in yolunu belirtmekte fayda var.
-			chromedp.ExecPath(`C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`),
-		)...,
+	// ---- URL AL ----
+	fmt.Print("\033[33m[?] İncelenecek URL'yi giriniz (örn: galileoff.com): \033[0m")
+	var rawURL string
+	fmt.Scanln(&rawURL)
+
+	if strings.TrimSpace(rawURL) == "" {
+		pkg.PrintError("Boş URL girildi.")
+		return
+	}
+
+	targetURL, normalized := pkg.NormalizeURL(rawURL)
+	parsed, err := url.Parse(targetURL)
+	if err != nil {
+		pkg.FatalError("Geçersiz URL formatı: %s", targetURL)
+	}
+
+	pkg.PrintInfo("Hedef URL: %s", targetURL)
+
+	// ---- KLASÖR ----
+	siteName := strings.ReplaceAll(parsed.Hostname(), ".", "_")
+	baseDir := filepath.Join(".", siteName)
+
+	if err := pkg.RecreateDir(baseDir); err != nil {
+		pkg.FatalError("Sonuç klasörü oluşturulamadı: %v", err)
+	}
+
+	pkg.PrintInfo("Sonuçlar '%s' klasörüne kaydedilecek.", baseDir)
+
+	// ---- LOG ----
+	logFile, err := os.OpenFile(
+		filepath.Join(baseDir, "app.log"),
+		os.O_CREATE|os.O_WRONLY|os.O_APPEND,
+		0644,
 	)
-	defer cancel()
-	ctx, cancel := chromedp.NewContext(allocCtx)
-	defer cancel()
+	if err != nil {
+		pkg.FatalError("Log dosyası açılamadı: %v", err)
+	}
+	defer logFile.Close()
 
-	// Yanıtı dinlemek için bir listener kuruyoruz
-	var response *network.Response
-	chromedp.ListenTarget(ctx, func(ev interface{}) {
-		if ev, ok := ev.(*network.EventResponseReceived); ok {
-			if ev.Type == network.ResourceTypeDocument {
-				response = ev.Response
-			}
+	infoLog := log.New(logFile, "[INFO] ", log.Ldate|log.Ltime)
+	debugLog := log.New(logFile, "[DEBUG] ", log.Ldate|log.Ltime)
+	errorLog := log.New(logFile, "[ERROR] ", log.Ldate|log.Ltime)
+
+	logInit(infoLog, targetURL, normalized)
+
+	// ---- SCRAPE ----
+	spin.Start()
+	navStart := time.Now()
+
+	result, err := pkg.Scrape(targetURL, infoLog, debugLog, errorLog)
+
+	spin.Stop()
+	navDuration := time.Since(navStart)
+
+	if err != nil {
+		pkg.FatalError("Kazıma sırasında hata oluştu: %v", err)
+	}
+
+	pkg.PrintSuccess("Sayfa başarıyla kazındı. (%.2fs)", navDuration.Seconds())
+
+	// ---- SONUÇLAR ----
+	logScrapeInfo(infoLog, result)
+	saveResults(baseDir, result, errorLog)
+	printSummary(baseDir, result, time.Since(start))
+
+	logFinal(infoLog, time.Since(start))
+}
+
+// ---- LOG FONKSİYONLARI ----
+func logInit(infoLog *log.Logger, targetURL string, normalized bool) {
+	infoLog.Println("===================================")
+	infoLog.Println("Program başlatıldı")
+	infoLog.Println("Hedef URL:", targetURL)
+	if normalized {
+		infoLog.Println("URL normalize edildi")
+	}
+	infoLog.Println("===================================")
+}
+
+func logScrapeInfo(infoLog *log.Logger, r *pkg.Result) {
+	infoLog.Println("HTTP Durumu:", r.HTTPStatus)
+	infoLog.Println("Taranan URL:", r.FinalURL)
+	infoLog.Println("Sayfa Başlığı:", r.Title)
+	infoLog.Println("HTML Boyutu:", len(r.HTML), "byte")
+	infoLog.Println("Screenshot Boyutu:", len(r.Screenshot), "byte")
+	infoLog.Println("Toplam Link Sayısı:", len(r.Links))
+}
+
+func logFinal(infoLog *log.Logger, totalDuration time.Duration) {
+	infoLog.Println("Toplam Süre:", totalDuration)
+	infoLog.Println("===================================")
+	infoLog.Println("Program sonlandı")
+	infoLog.Println("===================================")
+}
+
+// ---- DOSYA YAZMA ----
+func saveResults(baseDir string, r *pkg.Result, errorLog *log.Logger) {
+	pkg.PrintInfo("Sonuçlar diske yazılıyor...")
+
+	files := map[string][]byte{
+		"output.html":    []byte(r.HTML),
+		"screenshot.png": r.Screenshot,
+		"links.txt":      []byte(strings.Join(r.Links, "\n")),
+	}
+
+	for name, content := range files {
+		path := filepath.Join(baseDir, name)
+		if err := os.WriteFile(path, content, 0644); err != nil {
+			errorLog.Printf("%s yazılamadı: %v", name, err)
 		}
-	})
+	}
+}
 
-	// 3. HTML içeriğini ve ekran görüntüsünü alıyoruz burada
-	var htmlContent string
-	var screenshot []byte
-	err := chromedp.Run(ctx,
-		chromedp.Navigate(url),
-		chromedp.OuterHTML("html", &htmlContent),
-		chromedp.FullScreenshot(&screenshot, 90),
+// ---- ÖZET ----
+func printSummary(baseDir string, r *pkg.Result, total time.Duration) {
+	pkg.PrintBanner("Tarama Tamamlandı!")
+
+	pkg.PrintInfo("Taranan URL: %s", r.FinalURL)
+	pkg.PrintInfo("HTTP Durumu: %d", r.HTTPStatus)
+	pkg.PrintInfo("Sayfa Başlığı: %s", r.Title)
+	pkg.PrintInfo("Bulunan Link Sayısı: %d", len(r.Links))
+	pkg.PrintInfo("Toplam Süre: %.2fs", total.Seconds())
+
+	fmt.Println()
+	pkg.PrintSuccess("Sonuçlar '%s' klasörüne kaydedildi:", baseDir)
+
+	fmt.Printf(`
+    ├── output.html    (%s)
+    ├── screenshot.png (%s)
+    ├── links.txt      (%s)
+    └── app.log
+`,
+		pkg.FormatBytes(int64(len(r.HTML))),
+		pkg.FormatBytes(int64(len(r.Screenshot))),
+		pkg.FormatBytes(int64(len(r.Links))),
 	)
-	if err != nil {
-		log.Fatalf("URL'ye bağlanırken veya veri çekerken hata oluştu: %v", err)
-	}
-
-	// HTTP durum kodunu kontrol ediyoruz
-	if response != nil && response.Status != 200 {
-		log.Fatalf("Başarılı bir durum kodu alınamadı (HTTP %d %s)", response.Status, response.StatusText)
-	}
-
-	// 4. HTML içeriğini dosyaya kaydediyoruz
-	err = os.WriteFile("output.html", []byte(htmlContent), 0644)
-	if err != nil {
-		log.Fatalf("HTML içeriği dosyaya kaydedilirken hata oluştu: %v", err)
-	}
-	fmt.Println("HTML içeriği başarıyla output.html dosyasına kaydedildi.")
-
-	// 5. Ekran görüntüsünü dosyaya kaydediyoruz
-	err = os.WriteFile("screenshot.png", screenshot, 0644)
-	if err != nil {
-		log.Fatalf("Ekran görüntüsü dosyaya kaydedilirken hata oluştu: %v", err)
-	}
-	fmt.Println("Ekran görüntüsü başarıyla screenshot.png dosyasına kaydedildi.")
-
-	// URL'leri listeliyoruz
-	var links []string
-	err = chromedp.Run(ctx,
-		chromedp.Evaluate(`
-			Array.from(document.querySelectorAll('a')).map(a => a.href)
-		`, &links),
-	)
-	if err != nil {
-		log.Fatalf("URL'ler alınırken hata oluştu: %v", err)
-	}
-
-	fmt.Println("\nSayfada bulunan URL'ler:")
-	for _, link := range links {
-		fmt.Println(link)
-	}
 }
