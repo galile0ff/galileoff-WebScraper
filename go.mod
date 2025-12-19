@@ -6,6 +6,7 @@ require (
 	github.com/briandowns/spinner v1.23.2
 	github.com/chromedp/cdproto v0.0.0-20250803210736-d308e07a266d
 	github.com/chromedp/chromedp v0.14.2
+	golang.org/x/term v0.1.0
 )
 
 require (
@@ -18,5 +19,4 @@ require (
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/mattn/go-isatty v0.0.8 // indirect
 	golang.org/x/sys v0.34.0 // indirect
-	golang.org/x/term v0.1.0 // indirect
 )

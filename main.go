@@ -13,12 +13,10 @@ import (
 	"galileoff-WebScraper/pkg/cli"
 
 	bspinner "github.com/briandowns/spinner"
+	"golang.org/x/term"
 )
 
 func main() {
-	start := time.Now()
-	spin := bspinner.New(bspinner.CharSets[9], 100*time.Millisecond)
-
 	// ---- CLI / ASCII ----
 	opts := cli.Parse()
 	cli.PrintASCII(os.Stdout, opts)
@@ -32,6 +30,50 @@ func main() {
 	pkg.PrintStep(3, 3, "Hazır")
 	time.Sleep(500 * time.Millisecond)
 
+	for {
+		runScraper()
+
+		fmt.Println("\n\033[1;36m[?] İşlem seçiniz:\033[0m")
+		fmt.Println("    \033[1;37m[ SPACE ]\033[0m : Çıkış")
+		fmt.Println("    \033[1;37m[   F   ]\033[0m : Yeni Tarama")
+
+		// Raw Mod
+		oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
+		if err != nil {
+			pkg.PrintError("Terminal raw moda geçemedi, çıkılıyor: %v", err)
+			break
+		}
+
+		var char byte
+		buf := make([]byte, 1)
+		for {
+			_, err := os.Stdin.Read(buf)
+			if err != nil {
+				break
+			}
+			char = buf[0]
+			// Space (32), F (102), f (70), Ctrl+C (3)
+			if char == ' ' || char == 'f' || char == 'F' || char == 3 {
+				break
+			}
+		}
+		_ = term.Restore(int(os.Stdin.Fd()), oldState)
+
+		if char == ' ' || char == 3 {
+			pkg.GracefulExit(0)
+			break
+		} else if char == 'f' || char == 'F' {
+			fmt.Println("\n\033[1;32m➜ Yeni tarama başlatılıyor...\033[0m")
+			time.Sleep(500 * time.Millisecond)
+			continue
+		}
+	}
+}
+
+func runScraper() {
+	start := time.Now()
+	spin := bspinner.New(bspinner.CharSets[9], 100*time.Millisecond)
+
 	// ---- ARGÜMAN KONTROL ----
 	if len(cli.Args()) > 0 {
 		pkg.PrintError("Doğrudan URL yazmanız kabul edilmez.")
@@ -39,7 +81,8 @@ func main() {
 	}
 
 	// ---- URL AL ----
-	fmt.Print("\n\033[1;36m➜ Hedef URL (örn: galileoff.com / galileoff): \033[0m")
+	fmt.Println()
+	fmt.Print("\033[1;36m➜ Hedef URL (örn: galileoff.com / galileoff): \033[0m")
 
 	time.Sleep(200 * time.Millisecond)
 
@@ -48,30 +91,32 @@ func main() {
 
 	if strings.TrimSpace(rawURL) == "" {
 		pkg.PrintError("URL'i boş bırakma.")
-		pkg.GracefulExit(1)
+		return
 	}
 
 	targetURL, normalized := pkg.NormalizeURL(rawURL)
 	parsed, err := url.Parse(targetURL)
 	if err != nil {
-		pkg.FatalError("Geçersiz URL formatı: %s", targetURL)
+		pkg.PrintError("Geçersiz URL formatı: %s", targetURL)
+		return
 	}
 
 	fmt.Println()
 	pkg.PrintKeyValue("Hedef", targetURL)
 	pkg.PrintKeyValue("Durum", "Analiz Ediliyor")
-	time.Sleep(1500 * time.Millisecond)
+	time.Sleep(1000 * time.Millisecond)
 
 	// ---- KLASÖR ----
 	siteName := strings.ReplaceAll(parsed.Hostname(), ".", "_")
 	baseDir := filepath.Join(".", siteName)
 
 	if err := pkg.RecreateDir(baseDir); err != nil {
-		pkg.FatalError("Klasör hatası: %v", err)
+		pkg.PrintError("Klasör hatası: %v", err)
+		return
 	}
 
 	pkg.PrintKeyValue("Çalışma Alanı", baseDir)
-	time.Sleep(1000 * time.Millisecond)
+	time.Sleep(800 * time.Millisecond)
 
 	// ---- LOG ----
 	logFile, err := os.OpenFile(
@@ -80,7 +125,8 @@ func main() {
 		0644,
 	)
 	if err != nil {
-		pkg.FatalError("Log dosyası açılamadı: %v", err)
+		pkg.PrintError("Log dosyası açılamadı: %v", err)
+		return
 	}
 	defer logFile.Close()
 
@@ -93,13 +139,11 @@ func main() {
 	// ---- SCRAPE ----
 	fmt.Println()
 	pkg.PrintInfo("Headless tarayıcı başlatılıyor...")
-	time.Sleep(2000 * time.Millisecond)
+	time.Sleep(1500 * time.Millisecond)
 
 	spin.Prefix = "\033[36m[...]\033[0m İnceleniyor: "
 	spin.Start()
 	navStart := time.Now()
-
-	time.Sleep(1500 * time.Millisecond)
 
 	result, err := pkg.Scrape(targetURL, infoLog, debugLog, errorLog)
 
@@ -107,7 +151,8 @@ func main() {
 	navDuration := time.Since(navStart)
 
 	if err != nil {
-		pkg.FatalError("Kazıma sırasında hata oluştu: %v", err)
+		pkg.PrintError("Kazıma sırasında hata oluştu: %v", err)
+		return
 	}
 
 	fmt.Println()
@@ -116,17 +161,15 @@ func main() {
 
 	// ---- SONUÇLAR ----
 	pkg.PrintInfo("Veriler işleniyor...")
-	time.Sleep(2000 * time.Millisecond)
+	time.Sleep(1500 * time.Millisecond)
 
 	logScrapeInfo(infoLog, result)
 	saveResults(baseDir, result, errorLog)
 
-	time.Sleep(1000 * time.Millisecond)
+	time.Sleep(500 * time.Millisecond)
 	printSummary(baseDir, result, time.Since(start))
 
 	logFinal(infoLog, time.Since(start))
-
-	pkg.GracefulExit(0)
 }
 
 // ---- LOG FONKSİYONLARI ----
