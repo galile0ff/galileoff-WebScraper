@@ -33,7 +33,7 @@ Araç, sadece veri çekmekle kalmaz; hedef sitenin o anki görüntüsünü yüks
 | **🌐 Link Extractor** | Sayfa içindeki tüm iç ve dış bağlantıları ayrıştırır ve listeler. |
 | **💾 HTML Dump** | Sayfanın son render edilmiş DOM yapısını HTML dosyası olarak saklar. |
 | **🛡️ Güvenli Mod** | `Graceful Shutdown` özelliği ile işlemler yarıda kesilse bile verileri korur. |
-| **🎨 Cyberpunk CLI** | Neon temalı, ASCII sanatlı modern ve kullanıcı dostu terminal arayüzü. |
+| **🎨 Cyberpunk CLI** | Mizahi, ASCII sanatlı, modern ve kullanıcı dostu terminal arayüzü. |
 
 ## 🛠 Kurulum
 
@@ -43,14 +43,16 @@ Araç, sadece veri çekmekle kalmaz; hedef sitenin o anki görüntüsünü yüks
 
 ### Hızlı Kurulum
 
-```bash
 # 1. Projeyi klonlayın
+```bash
 git clone https://github.com/galile0ff/galileoff-WebScraper.git
-
+```
 # 2. Proje dizinine girin
+```bash
 cd galileoff-WebScraper
-
+```
 # 3. Bağımlılıkları yükleyin
+```bash
 go mod tidy
 ```
 
@@ -123,8 +125,15 @@ Açık kaynağa katkılarınızı bekliyoruz!
 
 ## 📈 Proje Grafiği
 
-[![Star History Chart](https://api.star-history.com/svg?repos=galile0ff/galileoff-WebScraper&type=Date)](https://star-history.com/#galile0ff/galileoff-WebScraper&Date)
+## Star History
 
+<a href="https://www.star-history.com/#galile0ff/galileoff-WebScraper&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=galile0ff/galileoff-WebScraper&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=galile0ff/galileoff-WebScraper&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=galile0ff/galileoff-WebScraper&type=date&legend=top-left" />
+ </picture>
+</a>
 ## 📄 Lisans
 
 Bu yazılım **MIT Lisansı** ile lisanslanmıştır. Daha fazla bilgi için [LICENSE](LICENSE) dosyasına göz atabilirsiniz.
