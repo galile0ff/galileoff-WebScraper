@@ -47,6 +47,10 @@ var arts = []Art{
 	{"banner20", ColorGreen, banner20},
 	{"banner21", ColorRed, banner21},
 	{"banner22", ColorWhite, banner22},
+	{"banner23", ColorBlue, banner23},
+	{"banner24", ColorWhite, banner24},
+	{"banner25", ColorRed, banner25},
+	{"banner26", ColorYellow, banner26},
 }
 
 func RandomArt() Art {
@@ -263,7 +267,7 @@ const banner18 = `
 const banner19 = `
   _______________________
  /                       \
-|     ABİ BU BİRİ Mİ?     |
+|     BU ABİ BİRİ Mİ?     |
 | GALILEOFF KİM Kİ ZATEN? |
  \_______________________/
           \
@@ -300,10 +304,52 @@ const banner22 = `
       _________
      |   BAR   |                     mukadderat diyelim.
    __|_________|__       --------------------------------
-  |               |      "Barı açıyorum Ayla..."
+  |               |      "Barı açıyorum..."
   |  ( )     ( )  |      
   |   |       |   |      "Ayla'yla aramı düzeltiyorum."
   |  _|_     _|_  |      
   |_______________|      "Babamı da yanıma alıyorum!"
-                         "Ve o verileri ÇEKİYORUM!"
+                         
+`
+
+const banner23 = `
+      ,----------.
+     /  _      _  \          
+    |  (o)    (x)  |         -------------------------
+    |   \____/     |         "Ben kodunu beğenmezsem,
+    |    |__|      |          bu uzman görüşü olur."
+   /     /  \       \        
+  |     /    \       |       "Sen beğenmezsen..."
+ /     /      \       \      "Çekememezlik olur!"
+`
+
+const banner24 = `
+         .---.
+        /     \                     Bekir'in de Kaderi Uğursuzdu
+       | (o) (o)         ---------------------------------------
+       |    |            "Bak site..."
+      /|   ___           "Ben bu scraping'i bırakırım dedim,"
+     / |  \___/          "Bırakamadım..."
+    /  |_______|         "İmkansız olduğunu bile bile... 
+      /   |  | \          403 yiyeceğimi bile bile..."
+`
+
+const banner25 = `
+       .---.
+      /  _  \          
+     |  (o)  |         ---------------------------
+     |   |   |         "Nereye gidiyorsun Bekir?"
+    /   -^-   \        
+   /     |     \       "- Verinin gittiği yere."
+  /      |      \      
+`
+
+const banner26 = `
+      ________________
+     | |__|__|__|__|__|      
+     |  _      _      |      ----------------------------------------
+     | |o|    |o|     |      "Dönüp dolaşıp aynı siteye geliyorsun."
+     |_|_|____|_|_____|      
+      (o)      (o)           "Kaderin bu senin Bekir,
+                             bu HTML'i parse etmek..."
 `
