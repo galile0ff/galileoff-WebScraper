@@ -28,7 +28,7 @@ Araç, sadece veri çekmekle kalmaz; hedef sitenin o anki görüntüsünü yüks
 
 | Özellik | Açıklama |
 | :--- | :--- |
-| **🔍 Web Scraping** | JS tabanlı siteleri (SPA, React, Vue vb.) eksiksiz tarama yeteneği. |
+| **🔍 Headless Scraping** | JS tabanlı siteleri (SPA, React, Vue vb.) eksiksiz tarama yeteneği. |
 | **📸 Akıllı Screenshot** | Sayfanın tam boyutlu ekran görüntüsünü otomatik olarak yakalar ve PNG olarak kaydeder. |
 | **🌐 Link Extractor** | Sayfa içindeki tüm iç ve dış bağlantıları ayrıştırır ve listeler. |
 | **💾 HTML Dump** | Sayfanın son render edilmiş DOM yapısını HTML dosyası olarak saklar. |
@@ -123,9 +123,7 @@ Açık kaynağa katkılarınızı bekliyoruz!
 4. Dalınızı push'layın (`git push origin ozellik/mükemmelozellik`).
 5. Bir **Pull Request** (PR) oluşturun.
 
-## 📈 Proje Grafiği
-
-## Star History
+## 📈 Star History
 
 <a href="https://www.star-history.com/#galile0ff/galileoff-WebScraper&type=date&legend=top-left">
  <picture>
@@ -134,6 +132,7 @@ Açık kaynağa katkılarınızı bekliyoruz!
    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=galile0ff/galileoff-WebScraper&type=date&legend=top-left" />
  </picture>
 </a>
+
 ## 📄 Lisans
 
 Bu yazılım **MIT Lisansı** ile lisanslanmıştır. Daha fazla bilgi için [LICENSE](LICENSE) dosyasına göz atabilirsiniz.
