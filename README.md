@@ -28,7 +28,7 @@ Araç, sadece veri çekmekle kalmaz; hedef sitenin o anki görüntüsünü yüks
 
 | Özellik | Açıklama |
 | :--- | :--- |
-| **🔍 Headless Scraping** | JS tabanlı siteleri (SPA, React, Vue vb.) eksiksiz tarama yeteneği. |
+| **🔍 Web Scraping** | JS tabanlı siteleri (SPA, React, Vue vb.) eksiksiz tarama yeteneği. |
 | **📸 Akıllı Screenshot** | Sayfanın tam boyutlu ekran görüntüsünü otomatik olarak yakalar ve PNG olarak kaydeder. |
 | **🌐 Link Extractor** | Sayfa içindeki tüm iç ve dış bağlantıları ayrıştırır ve listeler. |
 | **💾 HTML Dump** | Sayfanın son render edilmiş DOM yapısını HTML dosyası olarak saklar. |
@@ -108,7 +108,7 @@ galileoff_com/
 Bu proje açık kaynaklıdır ve geliştirilmesi zaman almaktadır. Eğer işinize yaradıysa ve destek olmak isterseniz:
 
 <div align="center">
-<a href="https://www.buymeacoffee.com/galile0ff" target="_blank">
+<a href="https://www.buymeacoffee.com/galileoff" target="_blank">
 <img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
 </a>
 </div>
