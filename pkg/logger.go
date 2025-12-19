@@ -55,31 +55,48 @@ func PrintKeyValue(key, value string) {
 }
 
 // FatalError, programı durdurur ve hata mesajı basar
+// GetFriendlyErrorMessage, teknik hata mesajını anlaşılabilir hale getirir
+func GetFriendlyErrorMessage(msg string) string {
+	if strings.Contains(msg, "ERR_NAME_NOT_RESOLVED") || strings.Contains(msg, "no such host") {
+		return "Siteye ulaşılamadı. URL yanlış olabilir veya internet bağlantısı yok."
+	} else if strings.Contains(msg, "ERR_CONNECTION_REFUSED") {
+		return "Bağlantı reddedildi. Site güvenliği veya güvenlik duvarı engelliyor."
+	} else if strings.Contains(msg, "403") {
+		return "Erişim engellendi (403). WAF veya güvenlik önlemlerine takıldık."
+	} else if strings.Contains(msg, "404") {
+		return "Sayfa bulunamadı (404). Link kırık veya sayfa kaldırılmış."
+	} else if strings.Contains(msg, "500") || strings.Contains(msg, "502") || strings.Contains(msg, "503") {
+		return "Karşı sunucu hatası (5xx). Site şu an hizmet veremiyor."
+	} else if strings.Contains(msg, "deadline exceeded") || strings.Contains(msg, "timeout") || strings.Contains(msg, "ERR_CONNECTION_TIMED_OUT") {
+		return "İşlem zaman aşımına uğradı. Site çok yavaş yanıt veriyor."
+	} else if strings.Contains(msg, "certificate") || strings.Contains(msg, "x509") || strings.Contains(msg, "ERR_CERT_") {
+		return "Güvenlik sertifikası (SSL) hatası. Bağlantı güvenli değil veya tarih/saat yanlış."
+	} else if strings.Contains(msg, "executable file not found") {
+		return "Chrome/Chromium veya MS Edge tarayıcısı sistemde bulunamadı."
+	} else if strings.Contains(msg, "ERR_INTERNET_DISCONNECTED") {
+		return "İnternet bağlantısı yok."
+	}
+	return "Beklenmedik teknik bir hata oluştu."
+}
+
+// PrintScrapeError, hatayı fatal olmadan ekrana basar
+func PrintScrapeError(err error) {
+	msg := err.Error()
+	friendlyMsg := GetFriendlyErrorMessage(msg)
+
+	fmt.Print("\r\033[K")
+	fmt.Println()
+
+	fmt.Printf("\033[41;1;37m %-58s \033[0m\n", "HATA OLUŞTU")
+	fmt.Printf("\033[90m│\033[0m \033[31m%s\033[0m\n", friendlyMsg)
+	fmt.Printf("\033[90m│ Teknik Detay: %s\033[0m\n", msg)
+	fmt.Println()
+}
+
+// FatalError, programı durdurur ve hata mesajı basar
 func FatalError(format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
-
-	// Hata mesajlarını daha anlaşılabilir hallerine çeviriyor
-	friendlyMsg := ""
-
-	if strings.Contains(msg, "ERR_NAME_NOT_RESOLVED") || strings.Contains(msg, "no such host") {
-		friendlyMsg = "Siteye ulaşılamadı. URL yanlış olabilir veya internet bağlantısı yok."
-	} else if strings.Contains(msg, "ERR_CONNECTION_REFUSED") {
-		friendlyMsg = "Bağlantı reddedildi. Site güvenliği veya güvenlik duvarı engelliyor."
-	} else if strings.Contains(msg, "403") {
-		friendlyMsg = "Erişim engellendi (403). WAF veya güvenlik önlemlerine takıldık."
-	} else if strings.Contains(msg, "404") {
-		friendlyMsg = "Sayfa bulunamadı (404). Link kırık veya sayfa kaldırılmış."
-	} else if strings.Contains(msg, "500") || strings.Contains(msg, "502") || strings.Contains(msg, "503") {
-		friendlyMsg = "Karşı sunucu hatası (5xx). Site şu an hizmet veremiyor."
-	} else if strings.Contains(msg, "deadline exceeded") || strings.Contains(msg, "timeout") {
-		friendlyMsg = "İşlem zaman aşımına uğradı. Site çok yavaş yanıt veriyor."
-	} else if strings.Contains(msg, "certificate") || strings.Contains(msg, "x509") {
-		friendlyMsg = "Güvenlik sertifikası (SSL) hatası. Bağlantı güvenli değil."
-	} else if strings.Contains(msg, "executable file not found") {
-		friendlyMsg = "Chrome/Chromium veya MS Edge tarayıcısı sistemde bulunamadı."
-	} else {
-		friendlyMsg = "Beklenmedik teknik bir hata oluştu."
-	}
+	friendlyMsg := GetFriendlyErrorMessage(msg)
 
 	fmt.Print("\r\033[K")
 	fmt.Println()

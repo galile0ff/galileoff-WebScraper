@@ -151,7 +151,7 @@ func runScraper() {
 	navDuration := time.Since(navStart)
 
 	if err != nil {
-		pkg.PrintError("Kazıma sırasında hata oluştu: %v", err)
+		pkg.PrintScrapeError(err)
 		return
 	}
 
