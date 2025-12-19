@@ -87,9 +87,9 @@ func Scrape(targetURL string, infoLog, debugLog, errorLog *log.Logger) (*Result,
 		chromedp.OuterHTML("html", &html),
 		chromedp.FullScreenshot(&screenshot, 90),
 		chromedp.Evaluate(`
-			Array.from(document.querySelectorAll("a"))
+			[...new Set(Array.from(document.querySelectorAll("a"))
 			.map(a => a.href)
-			.filter(h => h)
+			.filter(h => h))]
 		`, &links),
 	)
 	if err != nil {
