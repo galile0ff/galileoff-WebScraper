@@ -180,7 +180,7 @@ const banner10 = `
 const banner11 = `
       |\__/,|   ('"` + "`" + `\                 G A L I L E O F F
      _.|o o  |_   ) )           ----------------------------------
-   -(((---(((--------            "Tırmalamadık site bırakma knk."
+   -(((---(((--------            "Tırmalamadık site bırakma Firuş."
  `
 
 const banner12 = `
