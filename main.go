@@ -26,11 +26,11 @@ func main() {
 	pkg.PrintBanner("g a l i l e o f f .   W E B   S C R A P E R")
 
 	pkg.PrintStep(1, 3, "Sistem Başlatılıyor")
-	time.Sleep(400 * time.Millisecond)
+	time.Sleep(800 * time.Millisecond)
 	pkg.PrintStep(2, 3, "Modüller Yükleniyor")
-	time.Sleep(400 * time.Millisecond)
+	time.Sleep(800 * time.Millisecond)
 	pkg.PrintStep(3, 3, "Hazır")
-	time.Sleep(200 * time.Millisecond)
+	time.Sleep(500 * time.Millisecond)
 
 	// ---- ARGÜMAN KONTROL ----
 	if len(cli.Args()) > 0 {
@@ -48,7 +48,7 @@ func main() {
 
 	if strings.TrimSpace(rawURL) == "" {
 		pkg.PrintError("URL'i boş bırakma.")
-		return
+		pkg.GracefulExit(1)
 	}
 
 	targetURL, normalized := pkg.NormalizeURL(rawURL)
@@ -60,7 +60,7 @@ func main() {
 	fmt.Println()
 	pkg.PrintKeyValue("Hedef", targetURL)
 	pkg.PrintKeyValue("Durum", "Analiz Ediliyor")
-	time.Sleep(800 * time.Millisecond)
+	time.Sleep(1500 * time.Millisecond)
 
 	// ---- KLASÖR ----
 	siteName := strings.ReplaceAll(parsed.Hostname(), ".", "_")
@@ -71,7 +71,7 @@ func main() {
 	}
 
 	pkg.PrintKeyValue("Çalışma Alanı", baseDir)
-	time.Sleep(300 * time.Millisecond)
+	time.Sleep(1000 * time.Millisecond)
 
 	// ---- LOG ----
 	logFile, err := os.OpenFile(
@@ -93,7 +93,7 @@ func main() {
 	// ---- SCRAPE ----
 	fmt.Println()
 	pkg.PrintInfo("Headless tarayıcı başlatılıyor...")
-	time.Sleep(1 * time.Second)
+	time.Sleep(2000 * time.Millisecond)
 
 	spin.Prefix = "\033[36m[...]\033[0m İnceleniyor: "
 	spin.Start()
@@ -116,15 +116,17 @@ func main() {
 
 	// ---- SONUÇLAR ----
 	pkg.PrintInfo("Veriler işleniyor...")
-	time.Sleep(1 * time.Second)
+	time.Sleep(2000 * time.Millisecond)
 
 	logScrapeInfo(infoLog, result)
 	saveResults(baseDir, result, errorLog)
 
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(1000 * time.Millisecond)
 	printSummary(baseDir, result, time.Since(start))
 
 	logFinal(infoLog, time.Since(start))
+
+	pkg.GracefulExit(0)
 }
 
 // ---- LOG FONKSİYONLARI ----

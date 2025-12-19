@@ -19,27 +19,27 @@ func Typewriter(text string, delayMs int) {
 func PrintInfo(format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
 	fmt.Print("\033[36m➜ \033[0m")
-	Typewriter(msg+"\n", 10)
+	Typewriter(msg+"\n", 30)
 }
 
 // PrintSuccess, yeşil renkte başarı mesajı
 func PrintSuccess(format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
 	fmt.Print("\033[1;32m✔ \033[0m")
-	Typewriter(msg+"\n", 10)
+	Typewriter(msg+"\n", 30)
 }
 
 // PrintError, kırmızı renkte hata mesajı
 func PrintError(format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
 	fmt.Print("\033[1;31m✖ \033[0m")
-	Typewriter(msg+"\n", 10)
+	Typewriter(msg+"\n", 30)
 }
 
 // PrintStep
 func PrintStep(current, total int, message string) {
 	fmt.Printf("\033[33m[%d/%d]\033[0m %s...\n", current, total, message)
-	time.Sleep(200 * time.Millisecond)
+	time.Sleep(500 * time.Millisecond)
 }
 
 // PrintKeyValue
@@ -51,7 +51,7 @@ func PrintKeyValue(key, value string) {
 	}
 	dots := strings.Repeat(".", padding-keyLen)
 	fmt.Printf("\033[36m%s\033[0m%s: \033[1;37m%s\033[0m\n", key, dots, value)
-	time.Sleep(50 * time.Millisecond)
+	time.Sleep(150 * time.Millisecond)
 }
 
 // FatalError, programı durdurur ve hata mesajı basar
@@ -89,14 +89,27 @@ func FatalError(format string, a ...interface{}) {
 
 	fmt.Printf("\033[90m│ Teknik Detay: %s\033[0m\n", msg)
 
-	fmt.Println()
-	fmt.Print("\033[33m[!] Program kapatılıyor...\033[0m")
-	time.Sleep(1 * time.Second)
-	fmt.Print("\r\033[K")
-	fmt.Println("\033[33m[!] Kendine cici bak.\033[0m")
-	time.Sleep(500 * time.Millisecond)
+	GracefulExit(1)
+}
 
-	os.Exit(1)
+// GracefulExit, programı kapatma animasyonu için
+func GracefulExit(code int) {
+	fmt.Println()
+
+	msg := "[!] Program kapatılıyor..."
+	byeMsg := "[!] Kendine cici bak."
+
+	if code == 0 {
+		msg = "➜ İşlemler tamamlandı, kapatılıyor..."
+		byeMsg = "➜ Kendine cici bak."
+	}
+
+	fmt.Printf("\033[1;36m%s\033[0m", msg)
+	time.Sleep(3000 * time.Millisecond)
+	fmt.Print("\r\033[K")
+	fmt.Printf("\033[1;36m%s\033[0m\n", byeMsg)
+	time.Sleep(2000 * time.Millisecond)
+	os.Exit(code)
 }
 
 // PrintBanner
@@ -140,7 +153,7 @@ func PrintBox(title string, items map[string]string) {
 
 		fmt.Printf("\033[90m│\033[0m\033[36m%s\033[0m%s\033[90m│\033[0m\n",
 			lineContent, strings.Repeat(" ", padLen))
-		time.Sleep(30 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 	}
 	fmt.Println("\033[90m└" + strings.Repeat("─", width-2) + "┘\033[0m")
 }
@@ -159,7 +172,7 @@ func PrintTreeList(title string, items map[string]string) {
 		}
 
 		fmt.Printf(" \033[90m%s\033[0m \033[36m%s\033[0m \033[90m(%s)\033[0m\n", prefix, k, v)
-		time.Sleep(50 * time.Millisecond)
+		time.Sleep(150 * time.Millisecond)
 	}
 }
 

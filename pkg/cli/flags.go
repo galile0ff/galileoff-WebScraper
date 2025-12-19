@@ -58,7 +58,7 @@ func PrintASCII(w io.Writer, opts *Options) {
 	fmt.Fprint(w, colorCode)
 	for _, line := range lines {
 		fmt.Fprintln(w, line)
-		time.Sleep(30 * time.Millisecond)
+		time.Sleep(80 * time.Millisecond)
 	}
 	fmt.Fprint(w, "\033[0m")
 }

@@ -127,9 +127,12 @@ const banner5 = `
 `
 
 const banner6 = `
-   G   A   L   I   L   E   O - F F   [+] Hedef: Belirlendi  [+] Mod: Gizli
- __________________________________________________________________________
- \________________________________________________________________________/
+     _____
+    |     |
+    |_____|                        MASUMİYET ÇOCUKLUK MU Kİ?
+   /       \         ------------------------------------------------------
+  /_________\        "Bir ortalık insanı yüzünden demedim..."
+                     "Bir veri yüzünden, dönüp dolaşıp aynı porta geldik."         
 `
 
 const banner7 = `
@@ -148,22 +151,19 @@ const banner8 = `
  | |  __  __ | |_| | ___   ___| |_| |_ 
  | | |_ |/ _|| | | |/ _ \ / _ \  _|  _|
  | |__| | (_ | | | |  __/| (_) | | | |  
-  \_____|\__,_|_|_|_|\___| \___/|_| |_|  
+ \_____|\__,_|_|_|_|\___| \___/|_| |_|  
                                        
          --[ WEB KAZIYICI ]--
 `
 
 const banner9 = `
-      _.-"   "-._        
-    .'   .   .   '.      ---------------------------------------
-   /  .  .   .  .  \     "Azizim, burası Vahşi Batı..."
-   |  .  .   .  .  |
-   \    (o) (o)    /     "Burada robots.txt sökmez!"
-    \      ^      /      
-     |    ___    |       "Bana bunu yapma Jerry, verileri ver!"
-      \_________ /
-        \  *  /          (Şerif Yıldızı Veri İçin Parlıyor)
-         \___/
+       .
+     , O ,        ---------------------------------------
+  , '  |  ' ,     "Azizim, burası Vahşi Batı..."  
+  | -- * -- |     "Burada robots.txt sökmez!"   
+  ' ,  |  , '     "Bana bunu yapma Jerry, verileri ver!"
+     ' O '        
+       '          (Şerif Yıldızı Veri İçin Parlıyor)
 `
 
 const banner10 = `
@@ -193,16 +193,14 @@ const banner12 = `
 `
 
 const banner13 = `
-      _______
-     /       \         
-    |  _   _  |        ----------------------------------
-    | (o) (o) |        "Bu alemde gece mahkum olan,
-    |    <    |         gündüz veri çekemez!"
-     \  ___  /         
-      \_____/          "Sonunu düşünen kahraman olamaz,
-                        veriyi çeken kral olur."
-    
-    (Polat Alemdar Onaylı)
+      __
+    _|__|_                                  YERALTI?
+   (_o__o_)           ------------------------------
+  (   <    )          "Allah belamı versin ki,
+   \______/            hiçbir veriyi sevmiyorum..."
+      |
+     _|_              "Ama mecburum..."
+    |   |
 `
 
 const banner14 = `
@@ -252,23 +250,20 @@ const banner17 = `
 `
 
 const banner18 = `
-         ,---.
-        (     )        
-         \   /         --------------------------------------------
-          | |          "Mavi Fransız Kornası'nı senin için çaldım."
-      ___/   \___      (Şaka şaka, verilerini çaldım.)
-     /           \
-    |             |    g a l i l e o f f
-     \___________/     
-     
-     "Sanırım bu veriye aşık oldum."
+    ______
+   |      |
+   |      | .                            KAPI AÇIK.
+   |      |/          ------------------------------
+   |      /           "Herkesin bir masumiyeti,
+   |     |             herkesin bir verisi vardır."
+   |_____|
 `
 
 const banner19 = `
   _______________________
  /                       \
 |     BU ABİ BİRİ Mİ?     |
-| GALILEOFF KİM Kİ ZATEN? |
+| GALILEOFF KİM Kİ ZATEN. |
  \_______________________/
           \
            \   (o)__(o)
@@ -292,7 +287,7 @@ const banner21 = `
       .-""""""-.
     .'          '.        
    /   O      O   \       --------------------------------------------
-  :           '    :      "Sen hata mı gördün?"
+  :           '    :      "Sen hata mı gördün?.."
   |                |      
   :    .------.    :      "Kodu çalıştırırken hata mı gördün?"
    \  '        '  /       
@@ -350,6 +345,6 @@ const banner26 = `
      |  _      _      |      ----------------------------------------
      | |o|    |o|     |      "Dönüp dolaşıp aynı siteye geliyorsun."
      |_|_|____|_|_____|      
-      (o)      (o)           "Kaderin bu senin Bekir,
+      (o)         (o)        "Kaderin bu senin Bekir,
                              bu HTML'i parse etmek..."
 `
