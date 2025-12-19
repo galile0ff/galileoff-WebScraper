@@ -23,24 +23,31 @@ func main() {
 	opts := cli.Parse()
 	cli.PrintASCII(os.Stdout, opts)
 
-	pkg.PrintInfo("galileoff. Web Scraper")
-	pkg.PrintInfo("Hazır.")
+	pkg.PrintBanner("g a l i l e o f f .   W E B   S C R A P E R")
+
+	pkg.PrintStep(1, 3, "Sistem Başlatılıyor")
+	time.Sleep(400 * time.Millisecond)
+	pkg.PrintStep(2, 3, "Modüller Yükleniyor")
+	time.Sleep(400 * time.Millisecond)
+	pkg.PrintStep(3, 3, "Hazır")
+	time.Sleep(200 * time.Millisecond)
 
 	// ---- ARGÜMAN KONTROL ----
 	if len(cli.Args()) > 0 {
-		pkg.PrintError("URL komut satırından verilmez.")
-		pkg.PrintInfo("Kullanım: go run main.go")
-		pkg.PrintInfo("URL sizden istendiğinde yazın.")
+		pkg.PrintError("Doğrudan URL yazmanız kabul edilmez.")
 		return
 	}
 
 	// ---- URL AL ----
-	fmt.Print("\033[33m[?] İncelenecek URL'yi giriniz (örn: galileoff.com): \033[0m")
+	fmt.Print("\n\033[1;36m➜ Hedef URL (örn: galileoff.com / galileoff): \033[0m")
+
+	time.Sleep(200 * time.Millisecond)
+
 	var rawURL string
 	fmt.Scanln(&rawURL)
 
 	if strings.TrimSpace(rawURL) == "" {
-		pkg.PrintError("Boş URL girildi.")
+		pkg.PrintError("URL'i boş bırakma.")
 		return
 	}
 
@@ -50,17 +57,21 @@ func main() {
 		pkg.FatalError("Geçersiz URL formatı: %s", targetURL)
 	}
 
-	pkg.PrintInfo("Hedef URL: %s", targetURL)
+	fmt.Println()
+	pkg.PrintKeyValue("Hedef", targetURL)
+	pkg.PrintKeyValue("Durum", "Analiz Ediliyor")
+	time.Sleep(800 * time.Millisecond)
 
 	// ---- KLASÖR ----
 	siteName := strings.ReplaceAll(parsed.Hostname(), ".", "_")
 	baseDir := filepath.Join(".", siteName)
 
 	if err := pkg.RecreateDir(baseDir); err != nil {
-		pkg.FatalError("Sonuç klasörü oluşturulamadı: %v", err)
+		pkg.FatalError("Klasör hatası: %v", err)
 	}
 
-	pkg.PrintInfo("Sonuçlar '%s' klasörüne kaydedilecek.", baseDir)
+	pkg.PrintKeyValue("Çalışma Alanı", baseDir)
+	time.Sleep(300 * time.Millisecond)
 
 	// ---- LOG ----
 	logFile, err := os.OpenFile(
@@ -80,8 +91,15 @@ func main() {
 	logInit(infoLog, targetURL, normalized)
 
 	// ---- SCRAPE ----
+	fmt.Println()
+	pkg.PrintInfo("Headless tarayıcı başlatılıyor...")
+	time.Sleep(1 * time.Second)
+
+	spin.Prefix = "\033[36m[...]\033[0m İnceleniyor: "
 	spin.Start()
 	navStart := time.Now()
+
+	time.Sleep(1500 * time.Millisecond)
 
 	result, err := pkg.Scrape(targetURL, infoLog, debugLog, errorLog)
 
@@ -92,11 +110,18 @@ func main() {
 		pkg.FatalError("Kazıma sırasında hata oluştu: %v", err)
 	}
 
-	pkg.PrintSuccess("Sayfa başarıyla kazındı. (%.2fs)", navDuration.Seconds())
+	fmt.Println()
+	pkg.PrintSuccess("Erişim sağlandı ve veri çekildi. (%.2fs)", navDuration.Seconds())
+	time.Sleep(500 * time.Millisecond)
 
 	// ---- SONUÇLAR ----
+	pkg.PrintInfo("Veriler işleniyor...")
+	time.Sleep(1 * time.Second)
+
 	logScrapeInfo(infoLog, result)
 	saveResults(baseDir, result, errorLog)
+
+	time.Sleep(500 * time.Millisecond)
 	printSummary(baseDir, result, time.Since(start))
 
 	logFinal(infoLog, time.Since(start))
@@ -149,25 +174,31 @@ func saveResults(baseDir string, r *pkg.Result, errorLog *log.Logger) {
 
 // ---- ÖZET ----
 func printSummary(baseDir string, r *pkg.Result, total time.Duration) {
-	pkg.PrintBanner("Tarama Tamamlandı!")
+	summaryData := map[string]string{
+		"Taranan URL":   r.FinalURL,
+		"HTTP Durumu":   fmt.Sprintf("%d", r.HTTPStatus),
+		"Sayfa Başlığı": r.Title,
+		"Link Sayısı":   fmt.Sprintf("%d", len(r.Links)),
+		"Toplam Süre":   fmt.Sprintf("%.2fs", total.Seconds()),
+		"Çıktı Yolu":    baseDir,
+	}
 
-	pkg.PrintInfo("Taranan URL: %s", r.FinalURL)
-	pkg.PrintInfo("HTTP Durumu: %d", r.HTTPStatus)
-	pkg.PrintInfo("Sayfa Başlığı: %s", r.Title)
-	pkg.PrintInfo("Bulunan Link Sayısı: %d", len(r.Links))
-	pkg.PrintInfo("Toplam Süre: %.2fs", total.Seconds())
+	pkg.PrintBox(" T A R A M A   R A P O R U ", summaryData)
 
-	fmt.Println()
-	pkg.PrintSuccess("Sonuçlar '%s' klasörüne kaydedildi:", baseDir)
+	// app.log boyutu
+	logPath := filepath.Join(baseDir, "app.log")
+	logInfo, err := os.Stat(logPath)
+	logSize := "0 B"
+	if err == nil {
+		logSize = pkg.FormatBytes(logInfo.Size())
+	}
 
-	fmt.Printf(`
-    ├── output.html    (%s)
-    ├── screenshot.png (%s)
-    ├── links.txt      (%s)
-    └── app.log
-`,
-		pkg.FormatBytes(int64(len(r.HTML))),
-		pkg.FormatBytes(int64(len(r.Screenshot))),
-		pkg.FormatBytes(int64(len(r.Links))),
-	)
+	filesMap := map[string]string{
+		"output.html":    pkg.FormatBytes(int64(len(r.HTML))),
+		"screenshot.png": pkg.FormatBytes(int64(len(r.Screenshot))),
+		"links.txt":      pkg.FormatBytes(int64(len(r.Links))),
+		"app.log":        logSize,
+	}
+
+	pkg.PrintTreeList("Oluşturulan Dosyalar:", filesMap)
 }

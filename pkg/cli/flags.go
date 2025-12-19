@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"strings"
+	"time"
 )
 
 type Options struct {
@@ -50,5 +52,13 @@ func PrintASCII(w io.Writer, opts *Options) {
 		art = RandomArt()
 	}
 
-	fmt.Fprintln(w, art.Color+art.Data+"\033[0m")
+	lines := strings.Split(art.Data, "\n")
+	colorCode := art.Color
+
+	fmt.Fprint(w, colorCode)
+	for _, line := range lines {
+		fmt.Fprintln(w, line)
+		time.Sleep(30 * time.Millisecond)
+	}
+	fmt.Fprint(w, "\033[0m")
 }
