@@ -1,6 +1,6 @@
 <div align="center">
 
-![galileoff-WebScraper Intro](assets/intro.png)
+![galileoff-WebScraper Intro](assets/galileoff.png)
 
 # 🕷️ galileoff-WebScraper
 
