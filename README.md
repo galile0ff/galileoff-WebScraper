@@ -1,8 +1,10 @@
 <div align="center">
 
+![galileoff-WebScraper Intro](assets/intro.png)
+
 # 🕷️ galileoff-WebScraper
 
-![Go Version](https://img.shields.io/badge/Go-1.23%2B-00ADD8?style=for-the-badge&logo=go)
+![Go Version](https://img.shields.io/badge/Go-1.25%2B-00ADD8?style=for-the-badge&logo=go)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 ![Maintained](https://img.shields.io/badge/Maintained-Yes-blue?style=for-the-badge)
 
@@ -10,7 +12,7 @@
 
 *Siber Vatan Programı Yıldız CTI Ekibi görevi kapsamında geliştirilmiştir.*
 
-[Özellikler](#-özellikler) • [Kurulum](#-kurulum) • [Kullanım](#-kullanım) • [Teknolojiler](#-teknolojiler) • [Destek](#-destek)
+[Özellikler](#-özellikler) • [Kurulum](#-kurulum) • [Kullanım](#-kullanım) • [Yapı](#-proje-yapısı) • [İletişim](#-destek)
 
 </div>
 
@@ -18,68 +20,90 @@
 
 ## 📖 Hakkında
 
-**galileoff-WebScraper**, Go dili ve `chromedp` kütüphanesi kullanılarak geliştirilmiş, gelişmiş bir web kazıma (web scraping) aracıdır. Modern web sitelerinin dinamik içeriklerini (JavaScript ile yüklenen veriler dahil) yakalayabilir, ekran görüntüsü alabilir ve sayfa üzerindeki tüm bağlantıları analiz edebilir.
+**galileoff-WebScraper**, Go ekosisteminin gücünü kullanarak modern web sitelerini analiz etmek için tasarlanmış profesyonel bir araçtır. Standart HTTP isteklerinin yetersiz kaldığı durumlarda, **Chromedp** altyapısı sayesinde gerçek bir tarayıcı (headless) gibi davranarak JavaScript ile render edilen dinamik içerikleri sorunsuz bir şekilde yakalar.
 
-Kullanıcı dostu CLI (Komut Satırı Arayüzü) ve görsel geri bildirimleri ile siber güvenlik araştırmacıları ve geliştiriciler için pratik bir çözüm sunar.
+Araç, sadece veri çekmekle kalmaz; hedef sitenin o anki görüntüsünü yüksek çözünürlükte kaydeder ve site üzerindeki tüm ağ haritasını (link yapısını) çıkarır.
 
 ## ✨ Özellikler
 
-- 🚀 **Headless Browser**: Görünmez bir tarayıcı (headless Chrome/MS Edge) kullanarak JavaScript tabanlı siteleri eksiksiz tarar.
-- 📸 **Otomatik Screenshot**: Hedef sitenin tam sayfa ekran görüntüsünü alır ve kaydeder.
-- 🔗 **Link Çıkarma**: Sayfadaki tüm bağlantıları (href) toplayarak raporlar.
-- 💾 **HTML Dökümü**: Sayfanın işlenmiş son HTML halini kaydeder.
-- 🎨 **Etkileşimli CLI**: ASCII bannerlar, ilerleme çubukları (spinner) ve renkli terminal çıktıları.
-- 📂 **Organize Çıktı**: Her tarama için siteye özel klasörler oluşturur ve logları tutar.
-- 🔄 **URL Normalizasyonu**: Girilen URL'leri otomatik olarak düzeltir ve standart formata getirir.
+| Özellik | Açıklama |
+| :--- | :--- |
+| **🔍 Headless Scraping** | JS tabanlı siteleri (SPA, React, Vue vb.) eksiksiz tarama yeteneği. |
+| **📸 Akıllı Screenshot** | Sayfanın tam boyutlu ekran görüntüsünü otomatik olarak yakalar ve PNG olarak kaydeder. |
+| **🌐 Link Extractor** | Sayfa içindeki tüm iç ve dış bağlantıları ayrıştırır ve listeler. |
+| **💾 HTML Dump** | Sayfanın son render edilmiş DOM yapısını HTML dosyası olarak saklar. |
+| **🛡️ Güvenli Mod** | `Graceful Shutdown` özelliği ile işlemler yarıda kesilse bile verileri korur. |
+| **🎨 Cyberpunk CLI** | Neon temalı, ASCII sanatlı modern ve kullanıcı dostu terminal arayüzü. |
 
 ## 🛠 Kurulum
 
-Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin:
+### Ön Gereksinimler
+- **Go**: v1.23 veya üzeri
+- **Tarayıcı**: Google Chrome, Chromium veya MS Edge yüklü olmalıdır.
 
-### Gereksinimler
-- [Go](https://go.dev/dl/) (1.23 veya üzeri)
-- Google Chrome veya MS Edge (Chromedp için gereklidir)
+### Hızlı Kurulum
 
-### Adım 1: Depoyu Klonlayın
 ```bash
+# 1. Projeyi klonlayın
 git clone https://github.com/galile0ff/galileoff-WebScraper.git
-cd galileoff-WebScraper
-```
 
-### Adım 2: Bağımlılıkları Yükleyin
-```bash
+# 2. Proje dizinine girin
+cd galileoff-WebScraper
+
+# 3. Bağımlılıkları yükleyin
 go mod tidy
 ```
 
 ## 🚀 Kullanım
 
-Projeyi çalıştırmak için terminalde aşağıdaki komutu kullanın:
+Projeyi başlatmak için:
 
 ```bash
 go run main.go
 ```
 
-Program başladığında sizi karşılayan menüden sonra hedef URL'yi girin (örn: `galileoff.com`). Araç otomatik olarak:
-1. Siteye bağlanır.
-2. İçeriği analiz eder.
-3. Sonuçları (HTML, Screenshot, Linkler) site adıyla oluşturulan klasöre kaydeder.
+### 🎮 Kontroller
 
-### Kontroller
-- **F**: Yeni bir tarama başlatır.
-- **SPACE**: Programdan çıkış yapar.
+Program interaktif bir menüye sahiptir:
 
-## 💻 Teknolojiler
+- **Başlangıç**: Hedef URL'yi girin (örn: `galileoff.com`)
+- **`F` Tuşu**: Yeni bir tarama başlatır.
+- **`SPACE` Tuşu**: Programdan güvenli çıkış yapar.
 
-Bu proje aşağıdaki açık kaynak teknolojiler kullanılarak oluşturulmuştur:
+### 📂 Çıktı Örneği
 
-- **[Go (Golang)](https://go.dev/)**: Ana programlama dili.
-- **[Chromedp](https://github.com/chromedp/chromedp)**: Chrome DevTools Protocol ile tarayıcı otomasyonu.
-- **[Spinner](https://github.com/briandowns/spinner)**: Terminal ilerleme göstergesi.
-- **[Term](https://golang.org/x/term)**: Terminal raw mod ve giriş işlemleri.
+Her tarama için `domain_adi_com` formatında otomatik bir klasör oluşturulur:
+
+```text
+galileoff_com/
+├── app.log          # Detaylı işlem kayıtları
+├── output.html      # Sayfanın kaynak kodları
+├── screenshot.png   # Sitenin ekran görüntüsü
+└── links.txt        # Bulunan tüm bağlantılar
+```
+
+## 🏗 Proje Yapısı
+
+```bash
+.
+├── 📂 pkg/             # Ana kütüphane dosyaları
+│   ├── 📂 cli/         # CLI arayüz ve ASCII tasarımları
+│   │   ├── ascii.go    # ASCII sanat ve renk fonksiyonları
+│   │   └── flags.go    # CLI argüman yönetimi
+│   ├── logger.go       # Loglama mekanizması
+│   ├── scraper.go      # Web scraping motoru (Chromedp)
+│   └── utils.go        # Yardımcı dosya işlemleri
+├── .gitignore          # Git ayarları
+├── main.go             # Uygulama ana giriş noktası
+├── go.mod              # Go modül tanımları
+├── go.sum              # Bağımlılık sağlama
+├── LICENSE             # Lisans dosyası
+└── README.md           # Proje dokümantasyonu
+```
 
 ## ☕ Destek
 
-Bu projeyi beğendiyseniz ve geliştirmeme destek olmak isterseniz bana bir kahve ısmarlayabilirsiniz!
+Bu proje açık kaynaklıdır ve geliştirilmesi zaman almaktadır. Eğer işinize yaradıysa ve destek olmak isterseniz:
 
 <div align="center">
 <a href="https://www.buymeacoffee.com/galile0ff" target="_blank">
@@ -87,12 +111,26 @@ Bu projeyi beğendiyseniz ve geliştirmeme destek olmak isterseniz bana bir kahv
 </a>
 </div>
 
+## 🤝 Katkıda Bulunma
+
+Açık kaynağa katkılarınızı bekliyoruz!
+
+1. Bu repoyu fork'layın.
+2. Yeni bir özellik dalı (branch) oluşturun (`git checkout -b ozellik/mükemmelozellik`).
+3. Değişikliklerinizi yapın ve commit'leyin (`git commit -m 'Mükemmel ozellik eklendi'`).
+4. Dalınızı push'layın (`git push origin ozellik/mükemmelozellik`).
+5. Bir **Pull Request** (PR) oluşturun.
+
+## 📈 Proje Grafiği
+
+[![Star History Chart](https://api.star-history.com/svg?repos=galile0ff/galileoff-WebScraper&type=Date)](https://star-history.com/#galile0ff/galileoff-WebScraper&Date)
+
 ## 📄 Lisans
 
-Bu proje MIT Lisansı altında dağıtılmaktadır. Detaylar için `LICENSE` dosyasına bakınız.
+Bu yazılım **MIT Lisansı** ile lisanslanmıştır. Daha fazla bilgi için [LICENSE](LICENSE) dosyasına göz atabilirsiniz.
 
 ---
 
 <div align="center">
-Made with ❤️ by <a href="https://github.com/galile0ff">galile0ff</a>
+Developed with ☕ by <a href="https://github.com/galile0ff">galile0ff</a>
 </div>

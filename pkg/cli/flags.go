@@ -14,7 +14,7 @@ type Options struct {
 
 func Parse() *Options {
 	if flag.Lookup("art") == nil {
-		flag.String("art", "", "ASCII art to show (duck, cat, skull)")
+		flag.String("art", "", "ASCII art to show (mükemmel şeyler)")
 	}
 
 	if !flag.Parsed() {
